@@ -27,6 +27,12 @@ ENV CONAN_SYSREQUIRES_SUDO 0
 # leaving this flag undefined can cause some installation failures.
 ENV CONAN_SYSREQUIRES_MODE enabled
 
+# Store Conan files at this path so host chose to map as volume for semantic
+# completion. Must be same path on host and container for compile_commands.json
+# to match.
+ENV CONAN_USER_HOME=/etc/conan
+RUN mkdir ${CONAN_USER_HOME} && chmod a+rw ${CONAN_USER_HOME}
+
 # User-settable versions:
 # This Dockerfile should support gcc-[7, 8, 9, 10, 11] and clang-[10, 11, 12, 13]
 # Earlier versions of clang will require significant modifications to the IWYU section
@@ -77,6 +83,8 @@ RUN apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
 RUN apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y --no-install-recommends \
         doxygen graphviz ccache cppcheck
+ENV CCACHE_DIR=/home/ccache
+RUN mkdir ${CCACHE_DIR} && chmod a+rw ${CCACHE_DIR}
 
 # Install include-what-you-use
 ENV IWYU /home/iwyu
@@ -112,9 +120,5 @@ ENV CXX=${USE_CLANG:+"clang++"}
 # if CC is null, set it to 'gcc' (or leave as is otherwise).
 ENV CC=${CC:-"gcc"}
 ENV CXX=${CXX:-"g++"}
-
-# Include project
-#ADD . /workspaces/cpp_starter_project
-#WORKDIR /workspaces/cpp_starter_project
 
 CMD ["/bin/bash"]
