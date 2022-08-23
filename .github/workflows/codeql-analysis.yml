@@ -52,7 +52,6 @@ jobs:
         developer_mode:
           - OFF
 
-
     steps:
     - uses: actions/checkout@v2
 
@@ -69,17 +68,14 @@ jobs:
       uses: aminya/setup-cpp@v1
       with:
         compiler: ${{ matrix.compiler }}
-        vcvarsall: ${{ contains(matrix.os, 'windows' )}}
-
+        vcvarsall: false
         cmake: true
         ninja: true
         conan: true
         vcpkg: false
         ccache: true
         clangtidy: false
-
         cppcheck: false
-
         gcovr: false
         opencppcoverage: false
 
