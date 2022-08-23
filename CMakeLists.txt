@@ -159,6 +159,33 @@ package_project(TARGETS intro project_options project_warnings
   # PRIVATE_DEPENDENCIES_CONFIGURED project_options project_warnings
 )
 
+# additional target to perform clang-format run, requires clang-format
+file(GLOB_RECURSE ALL_SOURCE_FILES src/*.cpp src/*.h)
+#set(CLANG_FORMAT_EXCLUDE "")
+#foreach (SOURCE_FILE ${ALL_SOURCE_FILES})
+#    string(FIND ${SOURCE_FILE} ${CLANG_FORMAT_EXCLUDE} CLANG_FORMAT_EXCLUDE_FOUND)
+#    if (NOT ${CLANG_FORMAT_EXCLUDE_FOUND} EQUAL -1)
+#        list(REMOVE_ITEM ALL_SOURCE_FILES ${SOURCE_FILE})
+#    endif ()
+#endforeach ()
+
+add_custom_target(
+  clangformat
+  COMMAND /usr/bin/clang-format
+  -style=file
+  -i
+  ${ALL_SOURCE_FILES}
+)
+
+add_custom_target(
+  checkclangformat
+  DEPENDS ${ALL_SOURCE_FILES}
+  COMMAND /usr/bin/clang-format
+  -style=file
+  --dry-run -Werror --ferror-limit=10
+  ${ALL_SOURCE_FILES}
+)
+
 # Experience shows that explicit package naming can help make it easier to sort
 # out potential ABI related issues before they start, while helping you
 # track a build to a specific GIT SHA

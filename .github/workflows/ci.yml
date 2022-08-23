@@ -109,6 +109,11 @@ jobs:
         run: |
           cmake -S . -B ./build -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DENABLE_DEVELOPER_MODE:BOOL=${{matrix.developer_mode}} -DOPT_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
 
+      - name: Format
+        # Check files for formatting violations
+        run: |
+          cmake --build ./build --config ${{matrix.build_type}} --target checkclangformat
+
       - name: Build
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: |
