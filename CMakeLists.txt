@@ -93,6 +93,18 @@ include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 # set(<feature_name>_DEFAULT <value>) - set default for both user and developer modes
 # set(<feature_name>_DEVELOPER_DEFAULT <value>) - set default for developer mode
 # set(<feature_name>_USER_DEFAULT <value>) - set default for user mode
+set(ENABLE_CONAN_DEFAULT ON)
+set(ENABLE_DOXYGEN_DEFAULT ON)
+
+set(ENABLE_CPPCHECK_DEFAULT ON)
+set(ENABLE_CLANG_TIDY_DEFAULT ON)
+set(ENABLE_INCLUDE_WHAT_YOU_USE_DEFAULT ON)
+set(ENABLE_COVERAGE_DEFAULT ON)
+
+set(ENABLE_NATIVE_OPTIMIZATION_DEFAULT ON)
+
+set(ENABLE_SANITIZER_ADDRESS_DEVELOPER_DEFAULT ON)
+set(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR_DEVELOPER_DEFAULT ON)
 
 # Initialize project_options variable related to this project
 # This overwrites `project_options` and sets `project_warnings`
@@ -140,11 +152,14 @@ if(ENABLE_TESTING)
   add_subdirectory(test)
 endif()
 
-option(ENABLE_FUZZING "Enable the fuzz tests" OFF)
+option(ENABLE_FUZZING "Enable the fuzz tests" ${ENABLE_DEVELOPER_MODE})
 if(ENABLE_FUZZING)
   message(AUTHOR_WARNING "Building Fuzz Tests, using fuzzing sanitizer https://www.llvm.org/docs/LibFuzzer.html")
   add_subdirectory(fuzz_test)
 endif()
+
+# YCM
+set(CMAKE_EXPORT_COMPILE_COMMANDS ${ENABLE_DEVELOPER_MODE})
 
 if(CMAKE_SKIP_INSTALL_RULES)
   return()
