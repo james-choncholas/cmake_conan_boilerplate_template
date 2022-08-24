@@ -154,8 +154,19 @@ endif()
 
 option(ENABLE_FUZZING "Enable the fuzz tests" ${ENABLE_DEVELOPER_MODE})
 if(ENABLE_FUZZING)
-  message(AUTHOR_WARNING "Building Fuzz Tests, using fuzzing sanitizer https://www.llvm.org/docs/LibFuzzer.html")
-  add_subdirectory(fuzz_test)
+  try_compile(FUZZ_COMPILE_SUCCEEDED
+    "${CMAKE_BINARY_DIR}/compile_tests"
+    "${CMAKE_SOURCE_DIR}/fuzz_test/try_compile/fuzzer_try_compile.cpp"
+    LINK_LIBRARIES -fsanitize=fuzzer
+    OUTPUT_VARIABLE FUZZ_TRY_COMPILE_OUTPUT
+  )
+
+  if(FUZZ_COMPILE_SUCCEEDED)
+    message(AUTHOR_WARNING "Building Fuzz Tests, using fuzzing sanitizer https://www.llvm.org/docs/LibFuzzer.html")
+    add_subdirectory(fuzz_test)
+  else()
+    message("Compiler does not support fuzzing. try_compile output:\n" ${FUZZ_TRY_COMPILE_OUTPUT})
+  endif()
 endif()
 
 # YCM
